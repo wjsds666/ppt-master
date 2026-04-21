@@ -1,0 +1,28 @@
+{
+  "job_id": "0d95e671f9c94debaded2ef03644f102",
+  "status": "failed",
+  "created_at": "2026-04-21T12:38:54+00:00",
+  "updated_at": "2026-04-21T12:42:46+00:00",
+  "payload": {
+    "project_name": "qwen_image_test",
+    "source_text": "# 新能源汽车发布会\n\n- 需要一页封面主视觉图\n- 需要一页产品卖点图文\n",
+    "source_url": "",
+    "canvas_format": "ppt169",
+    "page_count": 2,
+    "target_audience": "",
+    "use_case": "",
+    "style_objective": "general_versatile",
+    "color_hint": "",
+    "image_strategy": "ai_generation",
+    "icon_style": "tabler-outline",
+    "template_name": "",
+    "notes_style": "professional",
+    "language": "",
+    "uploaded_file_path": "",
+    "uploaded_file_name": ""
+  },
+  "artifacts": {},
+  "error": "Model response did not contain an SVG document.",
+  "started_at": "2026-04-21T12:38:55+00:00",
+  "finished_at": "2026-04-21T12:42:46+00:00"
+}

@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#F8FAFC" />
+    </linearGradient>
+    <linearGradient id="heroGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F62FE" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+    <linearGradient id="softOrb1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F62FE" stop-opacity="0.14" />
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0.04" />
+    </linearGradient>
+    <linearGradient id="softOrb2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#16A34A" stop-opacity="0.14" />
+      <stop offset="100%" stop-color="#16A34A" stop-opacity="0.03" />
+    </linearGradient>
+    <filter id="softShadow" x="-15%" y="-15%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="12" />
+      <feOffset dx="0" dy="8" result="offsetBlur" />
+      <feFlood flood-color="#0F172A" flood-opacity="0.12" result="shadowColor" />
+      <feComposite in="shadowColor" in2="offsetBlur" operator="in" result="shadow" />
+      <feMerge>
+        <feMergeNode in="shadow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="titleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur" />
+      <feFlood flood-color="#38BDF8" flood-opacity="0.28" result="glowColor" />
+      <feComposite in="glowColor" in2="blur" operator="in" result="glow" />
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1280" height="720" fill="url(#bgGrad)" />
+
+  <g id="background-decoration">
+    <circle cx="1075" cy="130" r="170" fill="url(#softOrb1)" />
+    <circle cx="1190" cy="560" r="210" fill="url(#softOrb2)" />
+    <circle cx="915" cy="640" r="120" fill="#38BDF8" fill-opacity="0.07" />
+    <path fill="#FFFFFF" filter="url(#softShadow)" d="M866,60 H1154 A36,36 0 0 1 1190,96 V384 A36,36 0 0 1 1154,420 H866 A36,36 0 0 1 830,384 V96 A36,36 0 0 1 866,60 Z" />
+    <path fill="#F8FAFC" stroke="#CBD5E1" stroke-dasharray="10,6" stroke-width="2" d="M886,92 H1134 A24,24 0 0 1 1158,116 V364 A24,24 0 0 1 1134,388 H886 A24,24 0 0 1 862,364 V116 A24,24 0 0 1 886,92 Z" />
+    <text x="1010" y="220" text-anchor="middle" font-family="Microsoft YaHei" font-size="20" fill="#475569">封面背景占位</text>
+    <text x="1010" y="254" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#94A3B8">浅色科技商务抽象背景</text>
+    <text x="1010" y="278" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#94A3B8">右侧留白便于标题信息呈现</text>
+
+    <path d="M900 482 C980 430, 1070 430, 1160 470" fill="none" stroke="#0F62FE" stroke-opacity="0.18" stroke-width="3" />
+    <path d="M900 518 C995 475, 1085 490, 1160 540" fill="none" stroke="#16A34A" stroke-opacity="0.16" stroke-width="3" />
+    <path d="M900 554 C990 532, 1080 560, 1158 602" fill="none" stroke="#38BDF8" stroke-opacity="0.18" stroke-width="3" />
+
+    <circle cx="932" cy="460" r="6" fill="#0F62FE" />
+    <circle cx="1036" cy="438" r="6" fill="#0F62FE" />
+    <circle cx="1145" cy="466" r="6" fill="#0F62FE" />
+
+    <circle cx="946" cy="506" r="6" fill="#16A34A" />
+    <circle cx="1040" cy="493" r="6" fill="#16A34A" />
+    <circle cx="1140" cy="526" r="6" fill="#16A34A" />
+
+    <circle cx="934" cy="550" r="6" fill="#38BDF8" />
+    <circle cx="1038" cy="548" r="6" fill="#38BDF8" />
+    <circle cx="1138" cy="594" r="6" fill="#38BDF8" />
+  </g>
+
+  <g id="left-accent-panel">
+    <path fill="url(#heroGrad)" d="M65,56 H65 A5,5 0 0 1 70,61 V659 A5,5 0 0 1 65,664 H65 A5,5 0 0 1 60,659 V61 A5,5 0 0 1 65,56 Z" />
+    <path fill="#0F62FE" fill-opacity="0.10" d="M109,80 H229 A17,17 0 0 1 246,97 V97 A17,17 0 0 1 229,114 H109 A17,17 0 0 1 92,97 V97 A17,17 0 0 1 109,80 Z" />
+    <text x="169" y="103" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" font-weight="700" fill="#0F62FE">本地联调测试</text>
+  </g>
+
+  <g id="title-block">
+    <text font-family="Microsoft YaHei" fill="#0F172A" filter="url(#titleGlow)" font-weight="700" font-size="42" x="92" y="192">本地联调测试：经营表现呈现</text><text font-family="Microsoft YaHei" fill="#0F172A" filter="url(#titleGlow)" font-weight="700" font-size="42" x="92" y="248">增长但结构信号分化</text><path fill="url(#heroGrad)" d="M95,278 H689 A3,3 0 0 1 692,281 V281 A3,3 0 0 1 689,284 H95 A3,3 0 0 1 92,281 V281 A3,3 0 0 1 95,278 Z" />
+    <text x="92" y="332" font-family="Microsoft YaHei" font-size="24" font-weight="400" fill="#475569">
+      当前业务表现可概括为“收入增长明确、区域驱动集中、
+    </text>
+    <text x="92" y="368" font-family="Microsoft YaHei" font-size="24" font-weight="400" fill="#475569">
+      获客效率承压但存量经营改善”。
+    </text>
+  </g>
+
+  <g id="summary-card" filter="url(#softShadow)">
+    <path fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" d="M108,426 H704 A16,16 0 0 1 720,442 V606 A16,16 0 0 1 704,622 H108 A16,16 0 0 1 92,606 V442 A16,16 0 0 1 108,426 Z" />
+    <path fill="#F8FAFC" d="M108,426 H704 A16,16 0 0 1 720,442 V462 A16,16 0 0 1 704,478 H108 A16,16 0 0 1 92,462 V442 A16,16 0 0 1 108,426 Z" />
+    <rect x="92" y="462" width="628" height="16" fill="#F8FAFC" />
+    <text x="116" y="459" font-family="Microsoft YaHei" font-size="18" font-weight="700" fill="#0F172A">封面摘要</text>
+
+    <g id="bullet-1">
+      <circle cx="125" cy="511" r="5" fill="#0F62FE" />
+      <text x="145" y="517" font-family="Microsoft YaHei" font-size="18" fill="#0F172A">主题：本地联调测试</text>
+    </g>
+
+    <g id="bullet-2">
+      <circle cx="125" cy="555" r="5" fill="#16A34A" />
+      <text x="145" y="561" font-family="Microsoft YaHei" font-size="18" fill="#0F172A">核心看点：收入同比增长18%</text>
+    </g>
+
+    <g id="bullet-3">
+      <circle cx="125" cy="599" r="5" fill="#38BDF8" />
+      <text x="145" y="605" font-family="Microsoft YaHei" font-size="18" fill="#0F172A">补充信息：华东区贡献主要增量，新客成本上升、复购改善</text>
+    </g>
+  </g>
+
+  <g id="signal-tags">
+    <path fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" filter="url(#softShadow)" d="M769,454 H912 A16,16 0 0 1 928,470 V494 A16,16 0 0 1 912,510 H769 A16,16 0 0 1 753,494 V470 A16,16 0 0 1 769,454 Z" />
+    <text x="840.5" y="489" text-anchor="middle" font-family="SimHei" font-size="26" fill="#16A34A">+18%</text>
+    <text x="840.5" y="511" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#475569">收入同比增长</text>
+
+    <path fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" filter="url(#softShadow)" d="M964,454 H1164 A16,16 0 0 1 1180,470 V494 A16,16 0 0 1 1164,510 H964 A16,16 0 0 1 948,494 V470 A16,16 0 0 1 964,454 Z" />
+    <text x="1064" y="489" text-anchor="middle" font-family="SimHei" font-size="24" fill="#0F62FE">华东主增量</text>
+    <text x="1064" y="511" text-anchor="middle" font-family="Microsoft YaHei" font-size="14" fill="#475569">区域驱动相对集中</text>
+
+    <path fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1" filter="url(#softShadow)" d="M847,530 H1164 A16,16 0 0 1 1180,546 V570 A16,16 0 0 1 1164,586 H847 A16,16 0 0 1 831,570 V546 A16,16 0 0 1 847,530 Z" />
+    <text x="1005.5" y="565" text-anchor="middle" font-family="Microsoft YaHei" font-size="22" font-weight="700" fill="#DC2626">新客成本上升</text>
+    <text x="1130" y="565" text-anchor="middle" font-family="Microsoft YaHei" font-size="22" font-weight="700" fill="#16A34A">复购改善</text>
+  </g>
+
+  <g id="footer">
+    <line x1="60" y1="676" x2="1220" y2="676" stroke="#CBD5E1" stroke-width="1" />
+    <text x="60" y="700" font-family="Microsoft YaHei" font-size="13" fill="#94A3B8">来源于用户提供的简要业务要点，适合用作封面摘要。</text>
+    <text x="1220" y="700" text-anchor="end" font-family="Microsoft YaHei" font-size="13" fill="#94A3B8">01</text>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+{
+  "job_id": "aba597eba3084ef1bb3df4a7b0413a19",
+  "status": "failed",
+  "created_at": "2026-04-21T11:41:16+00:00",
+  "updated_at": "2026-04-21T11:45:49+00:00",
+  "payload": {
+    "project_name": "smoke_test_local_retry5",
+    "source_text": "# 本地联调测试\n\n- 收入同比增长18%\n- 华东区贡献主要增量\n- 新客成本上升，复购改善\n",
+    "source_url": "",
+    "canvas_format": "ppt169",
+    "page_count": 2,
+    "target_audience": "",
+    "use_case": "",
+    "style_objective": "general_versatile",
+    "color_hint": "",
+    "image_strategy": "placeholder",
+    "icon_style": "tabler-outline",
+    "template_name": "",
+    "notes_style": "professional",
+    "language": "",
+    "uploaded_file_path": "",
+    "uploaded_file_name": ""
+  },
+  "artifacts": {},
+  "error": "Traceback (most recent call last):\n  File \"/Users/thanksjing/develope/开源项目/ppt-master/skills/ppt-master/scripts/svg_to_pptx.py\", line 14, in <module>\n    from svg_to_pptx import main\n  File \"/Users/thanksjing/develope/开源项目/ppt-master/skills/ppt-master/scripts/svg_to_pptx/__init__.py\", line 9, in <module>\n    from .pptx_cli import main\n  File \"/Users/thanksjing/develope/开源项目/ppt-master/skills/ppt-master/scripts/svg_to_pptx/pptx_cli.py\", line 12, in <module>\n    from .pptx_builder import create_pptx_with_native_svg\n  File \"/Users/thanksjing/develope/开源项目/ppt-master/skills/ppt-master/scripts/svg_to_pptx/pptx_builder.py\", line 12, in <module>\n    from pptx import Presentation\nModuleNotFoundError: No module named 'pptx'",
+  "started_at": "2026-04-21T11:41:18+00:00",
+  "finished_at": "2026-04-21T11:45:49+00:00"
+}

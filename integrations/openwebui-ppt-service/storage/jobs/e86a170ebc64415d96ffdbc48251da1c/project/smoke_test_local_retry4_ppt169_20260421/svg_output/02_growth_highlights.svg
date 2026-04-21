@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F62FE"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F62FE"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <filter id="softShadow" x="-15%" y="-15%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10"/>
+      <feOffset dx="0" dy="5" result="offsetBlur"/>
+      <feFlood flood-color="#0F172A" flood-opacity="0.10" result="shadowColor"/>
+      <feComposite in="shadowColor" in2="offsetBlur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="blueGlow" x="-20%" y="-20%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#0F62FE" flood-opacity="0.20" result="glowColor"/>
+      <feComposite in="glowColor" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1280" height="720" fill="#FFFFFF"/>
+
+  <g id="decor-top-right">
+    <circle cx="1170" cy="88" r="84" fill="#38BDF8" fill-opacity="0.08"/>
+    <circle cx="1215" cy="62" r="42" fill="#0F62FE" fill-opacity="0.06"/>
+    <rect x="1030" y="42" width="150" height="150" rx="28" fill="#0F62FE" fill-opacity="0.03"/>
+  </g>
+
+  <g id="header">
+    <rect x="60" y="50" width="8" height="56" rx="4" fill="url(#headerGrad)"/>
+    <text x="86" y="88" font-family="Microsoft YaHei" font-size="30" font-weight="700" fill="#0F172A">收入同比增长18%，华东区是主要增量来源</text>
+    <text x="86" y="120" font-family="Microsoft YaHei" font-size="18" fill="#475569">增长已经出现明确结果，且区域贡献具有集中性。</text>
+    <line x1="60" y1="144" x2="1220" y2="144" stroke="#CBD5E1" stroke-width="1"/>
+  </g>
+
+  <g id="summary-band">
+    <rect x="60" y="168" width="1160" height="84" rx="16" fill="#F8FAFC"/>
+    <rect x="60" y="168" width="1160" height="84" rx="16" fill="url(#accentGrad)" fill-opacity="0.04"/>
+    <text x="88" y="202" font-family="Microsoft YaHei" font-size="16" fill="#475569">经营结论</text>
+    <text x="88" y="232" font-family="Microsoft YaHei" font-size="22" font-weight="700" fill="#0F172A">当前业务延续增长态势，核心亮点集中在总收入提升与华东区增量拉动。</text>
+    <text x="880" y="202" font-family="Microsoft YaHei" font-size="16" fill="#475569">呈现方式</text>
+    <text x="880" y="232" font-family="Microsoft YaHei" font-size="18" fill="#0F172A">源文档仅提供一个明确增速数字和两项经营观察，因此采用结论卡片而非复杂图表。</text>
+  </g>
+
+  <g id="cards-row">
+    <g id="card-revenue" filter="url(#softShadow)">
+      <rect x="60" y="280" width="370" height="320" rx="16" fill="#FFFFFF"/>
+      <rect x="60" y="280" width="370" height="320" rx="16" fill="#F8FAFC"/>
+      <rect x="60" y="280" width="370" height="6" rx="3" fill="#0F62FE"/>
+      <g id="card-revenue-icon">
+        <circle cx="110" cy="336" r="26" fill="#0F62FE" fill-opacity="0.10"/>
+        <use data-icon="tabler-outline/chart-bar" x="94" y="320" width="32" height="32" fill="#0F62FE"/>
+      </g>
+      <text x="148" y="332" font-family="Microsoft YaHei" font-size="18" fill="#475569">KPI卡片 1</text>
+      <text x="148" y="360" font-family="Microsoft YaHei" font-size="24" font-weight="700" fill="#0F172A">收入同比增长</text>
+      <text x="86" y="460" font-family="SimHei" font-size="68" font-weight="700" fill="#0F62FE" filter="url(#blueGlow)">18%</text>
+      <text x="86" y="502" font-family="Microsoft YaHei" font-size="18" fill="#475569">增长结果已明确落地，说明本轮经营动作</text>
+      <text x="86" y="530" font-family="Microsoft YaHei" font-size="18" fill="#475569">并非短期波动，而是具备一定韧性支撑。</text>
+      <line x1="86" y1="554" x2="404" y2="554" stroke="#CBD5E1" stroke-width="1"/>
+      <text x="86" y="584" font-family="Microsoft YaHei" font-size="16" fill="#16A34A">• 核心判断：总盘子在扩张</text>
+    </g>
+
+    <g id="card-east" filter="url(#softShadow)">
+      <rect x="455" y="280" width="370" height="320" rx="16" fill="#FFFFFF"/>
+      <rect x="455" y="280" width="370" height="320" rx="16" fill="#F8FAFC"/>
+      <rect x="455" y="280" width="370" height="6" rx="3" fill="#38BDF8"/>
+      <g id="card-east-icon">
+        <circle cx="505" cy="336" r="26" fill="#38BDF8" fill-opacity="0.14"/>
+        <use data-icon="tabler-outline/map-pin" x="489" y="320" width="32" height="32" fill="#0F62FE"/>
+      </g>
+      <text x="543" y="332" font-family="Microsoft YaHei" font-size="18" fill="#475569">KPI卡片 2</text>
+      <text x="543" y="360" font-family="Microsoft YaHei" font-size="24" font-weight="700" fill="#0F172A">华东区贡献主要增量</text>
+      <rect x="86" y="0" width="0" height="0" fill="#FFFFFF"/>
+      <g id="east-focus-badge">
+        <rect x="485" y="412" width="188" height="50" rx="25" fill="#0F62FE" fill-opacity="0.10"/>
+        <text x="579" y="444" text-anchor="middle" font-family="SimHei" font-size="30" font-weight="700" fill="#0F62FE">主要增量来源</text>
+      </g>
+      <text x="481" y="502" font-family="Microsoft YaHei" font-size="18" fill="#475569">区域贡献呈现集中性，意味着增长并非</text>
+      <text x="481" y="530" font-family="Microsoft YaHei" font-size="18" fill="#475569">全面均衡扩张，而是由重点区域显著拉动。</text>
+      <line x1="481" y1="554" x2="799" y2="554" stroke="#CBD5E1" stroke-width="1"/>
+      <text x="481" y="584" font-family="Microsoft YaHei" font-size="16" fill="#16A34A">• 管理含义：优先复盘华东经验</text>
+    </g>
+
+    <g id="card-customer" filter="url(#softShadow)">
+      <rect x="850" y="280" width="370" height="320" rx="16" fill="#FFFFFF"/>
+      <rect x="850" y="280" width="370" height="320" rx="16" fill="#F8FAFC"/>
+      <rect x="850" y="280" width="370" height="6" rx="3" fill="#16A34A"/>
+      <g id="card-customer-icons">
+        <circle cx="900" cy="336" r="26" fill="#16A34A" fill-opacity="0.12"/>
+        <use data-icon="tabler-outline/user-plus" x="884" y="320" width="32" height="32" fill="#16A34A"/>
+        <circle cx="960" cy="336" r="26" fill="#0F62FE" fill-opacity="0.10"/>
+        <use data-icon="tabler-outline/refresh" x="944" y="320" width="32" height="32" fill="#0F62FE"/>
+      </g>
+      <text x="1000" y="332" font-family="Microsoft YaHei" font-size="18" fill="#475569">KPI卡片 3</text>
+      <text x="1000" y="360" font-family="Microsoft YaHei" font-size="24" font-weight="700" fill="#0F172A">获客与复购结构变化</text>
+      <g id="customer-status">
+        <rect x="876" y="418" width="144" height="42" rx="21" fill="#DC2626" fill-opacity="0.10"/>
+        <text x="948" y="445" text-anchor="middle" font-family="Microsoft YaHei" font-size="18" font-weight="700" fill="#DC2626">新客成本上升</text>
+        <rect x="1036" y="418" width="144" height="42" rx="21" fill="#16A34A" fill-opacity="0.12"/>
+        <text x="1108" y="445" text-anchor="middle" font-family="Microsoft YaHei" font-size="18" font-weight="700" fill="#16A34A">复购表现改善</text>
+      </g>
+      <text x="876" y="502" font-family="Microsoft YaHei" font-size="18" fill="#475569">经营质量出现分化：拉新效率承压，</text>
+      <text x="876" y="530" font-family="Microsoft YaHei" font-size="18" fill="#475569">但存量用户经营效果正在变好。</text>
+      <line x1="876" y1="554" x2="1194" y2="554" stroke="#CBD5E1" stroke-width="1"/>
+      <text x="876" y="584" font-family="Microsoft YaHei" font-size="16" fill="#16A34A">• 下一步：控成本、放大复购价值</text>
+    </g>
+  </g>
+
+  <g id="footer">
+    <line x1="60" y1="654" x2="1220" y2="654" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="60" y="682" font-family="Microsoft YaHei" font-size="14" fill="#94A3B8">02</text>
+    <text x="92" y="682" font-family="Microsoft YaHei" font-size="14" fill="#94A3B8">smoke_test_local_retry4 · 本地联调演示</text>
+    <text x="1220" y="682" text-anchor="end" font-family="Microsoft YaHei" font-size="14" fill="#94A3B8">内容基于源文档经营结论整理</text>
+  </g>
+</svg>

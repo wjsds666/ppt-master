@@ -1,0 +1,15 @@
+{
+  "llm_base_url": "https://airouter.service.itstudio.club/v1",
+  "llm_api_key": "sk-matCX4aOin95cK0RUWUKgimFGBvmqGxLS35gs9zVqI5Oeukt",
+  "llm_model": "gpt-5.4",
+  "ai_image_enabled": true,
+  "image_backend": "openai",
+  "image_api_key": "sk-ygjehcqezejvogbdzdlhcfminyfzpagkksnmaugrjoptdzhw",
+  "image_model": "Qwen-Image",
+  "image_base_url": "https://api.siliconflow.cn/v1",
+  "public_base_url": "http://127.0.0.1:8099",
+  "service_api_key": "wjsds666",
+  "default_canvas_format": "ppt169",
+  "default_page_count": 4,
+  "default_style_objective": "general_versatile"
+}

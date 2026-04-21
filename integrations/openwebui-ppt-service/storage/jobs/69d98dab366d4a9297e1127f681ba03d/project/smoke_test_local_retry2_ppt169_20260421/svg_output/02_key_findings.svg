@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1565C0"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="takeawayGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#EFF6FF"/>
+      <stop offset="100%" stop-color="#F0FDF4"/>
+    </linearGradient>
+    <filter id="softShadow" x="-15%" y="-15%" width="140%" height="150%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10"/>
+      <feOffset dx="0" dy="6" result="offsetBlur"/>
+      <feFlood flood-color="#0F172A" flood-opacity="0.10" result="shadowColor"/>
+      <feComposite in="shadowColor" in2="offsetBlur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="blueGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#1565C0" flood-opacity="0.18" result="glowColor"/>
+      <feComposite in="glowColor" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1280" height="720" fill="#FFFFFF"/>
+
+  <g id="background-decor">
+    <circle cx="1135" cy="110" r="120" fill="#38BDF8" fill-opacity="0.06"/>
+    <circle cx="1185" cy="640" r="150" fill="#16A34A" fill-opacity="0.05"/>
+    <circle cx="110" cy="630" r="110" fill="#1565C0" fill-opacity="0.04"/>
+  </g>
+
+  <g id="header">
+    <rect x="60" y="54" width="88" height="6" rx="3" fill="url(#headerGrad)"/>
+    <text x="60" y="94" font-family="Microsoft YaHei" font-size="30" font-weight="700" fill="#0F172A">核心结论：收入同比+18%，但拉新与复购表现出现分化</text>
+    <text x="60" y="124" font-family="Microsoft YaHei" font-size="18" fill="#475569">增长结果积极，但新增获客效率承压，复购成为当前质量修复点。</text>
+  </g>
+
+  <g id="takeaway-band">
+    <rect x="60" y="146" width="1160" height="52" rx="16" fill="url(#takeawayGrad)" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="86" y="179" font-family="Microsoft YaHei" font-size="17" fill="#1565C0" font-weight="700">经营判断</text>
+    <text x="190" y="179" font-family="Microsoft YaHei" font-size="17" fill="#475569">结果向好，但增长质量需要继续观察：拉新效率承压，复购改善提供阶段性支撑。</text>
+  </g>
+
+  <g id="card-result">
+    <rect x="60" y="226" width="372" height="412" rx="16" fill="#FFFFFF" filter="url(#softShadow)"/>
+    <rect x="60" y="226" width="372" height="412" rx="16" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+    <rect x="84" y="248" width="92" height="32" rx="16" fill="#EFF6FF"/>
+    <text x="130" y="269" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" font-weight="700" fill="#1565C0">结果面</text>
+
+    <g id="result-icon">
+      <circle cx="124" cy="328" r="34" fill="#EFF6FF"/>
+      <use data-icon="tabler-outline/chart-bar" x="100" y="304" width="48" height="48" fill="#1565C0"/>
+    </g>
+
+    <text x="84" y="392" font-family="SimHei" font-size="64" font-weight="700" fill="#1565C0" filter="url(#blueGlow)">+18%</text>
+    <text x="84" y="432" font-family="Microsoft YaHei" font-size="20" font-weight="700" fill="#0F172A">收入同比增长</text>
+
+    <line x1="84" y1="458" x2="408" y2="458" stroke="#CBD5E1" stroke-width="1"/>
+
+    <text x="84" y="498" font-family="Microsoft YaHei" font-size="18" fill="#475569">
+      <tspan x="84" dy="0">收入同比增长18%，</tspan>
+      <tspan x="84" dy="30">整体延续增长态势。</tspan>
+    </text>
+
+    <g id="result-footer">
+      <rect x="84" y="560" width="324" height="54" rx="12" fill="#F8FAFC"/>
+      <text x="102" y="593" font-family="Microsoft YaHei" font-size="16" fill="#0F172A">明确数值来自源文档，可作为本轮复盘的结果锚点。</text>
+    </g>
+  </g>
+
+  <g id="card-pressure">
+    <rect x="454" y="226" width="372" height="412" rx="16" fill="#FFFFFF" filter="url(#softShadow)"/>
+    <rect x="454" y="226" width="372" height="412" rx="16" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+    <rect x="478" y="248" width="92" height="32" rx="16" fill="#FEF2F2"/>
+    <text x="524" y="269" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" font-weight="700" fill="#DC2626">压力面</text>
+
+    <g id="pressure-icon">
+      <circle cx="518" cy="328" r="34" fill="#FEF2F2"/>
+      <use data-icon="tabler-outline/user-plus" x="494" y="304" width="48" height="48" fill="#DC2626"/>
+    </g>
+
+    <text x="478" y="392" font-family="SimHei" font-size="50" font-weight="700" fill="#DC2626">成本上升</text>
+    <text x="478" y="432" font-family="Microsoft YaHei" font-size="20" font-weight="700" fill="#0F172A">拉新效率承压</text>
+
+    <line x1="478" y1="458" x2="802" y2="458" stroke="#CBD5E1" stroke-width="1"/>
+
+    <text x="478" y="498" font-family="Microsoft YaHei" font-size="18" fill="#475569">
+      <tspan x="478" dy="0">新客成本上升，说明</tspan>
+      <tspan x="478" dy="30">拉新效率需要重点关注。</tspan>
+    </text>
+
+    <g id="pressure-footer">
+      <rect x="478" y="560" width="324" height="54" rx="12" fill="#FFF7ED"/>
+      <text x="496" y="593" font-family="Microsoft YaHei" font-size="16" fill="#0F172A">趋势判断提示：若不修复链路，增长质量可能继续走弱。</text>
+    </g>
+  </g>
+
+  <g id="card-support">
+    <rect x="848" y="226" width="372" height="412" rx="16" fill="#FFFFFF" filter="url(#softShadow)"/>
+    <rect x="848" y="226" width="372" height="412" rx="16" fill="none" stroke="#CBD5E1" stroke-width="1"/>
+    <rect x="872" y="248" width="92" height="32" rx="16" fill="#F0FDF4"/>
+    <text x="918" y="269" text-anchor="middle" font-family="Microsoft YaHei" font-size="15" font-weight="700" fill="#16A34A">支撑面</text>
+
+    <g id="support-icon">
+      <circle cx="912" cy="328" r="34" fill="#F0FDF4"/>
+      <use data-icon="tabler-outline/repeat" x="888" y="304" width="48" height="48" fill="#16A34A"/>
+    </g>
+
+    <text x="872" y="392" font-family="SimHei" font-size="50" font-weight="700" fill="#16A34A">复购改善</text>
+    <text x="872" y="432" font-family="Microsoft YaHei" font-size="20" font-weight="700" fill="#0F172A">经营稳定性的支撑项</text>
+
+    <line x1="872" y1="458" x2="1196" y2="458" stroke="#CBD5E1" stroke-width="1"/>
+
+    <text x="872" y="498" font-family="Microsoft YaHei" font-size="18" fill="#475569">
+      <tspan x="872" dy="0">复购改善，对经营稳定性</tspan>
+      <tspan x="872" dy="30">形成一定支撑。</tspan>
+    </text>
+
+    <g id="support-footer">
+      <rect x="872" y="560" width="324" height="54" rx="12" fill="#F8FAFC"/>
+      <text x="890" y="593" font-family="Microsoft YaHei" font-size="16" fill="#0F172A">趋势判断提示：复购修复是当前对冲获客压力的关键抓手。</text>
+    </g>
+  </g>
+
+  <g id="footer">
+    <line x1="60" y1="668" x2="1220" y2="668" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="60" y="694" font-family="Microsoft YaHei" font-size="14" fill="#94A3B8">来源说明：仅使用源文档中的1个明确数值与2个趋势判断，未补充额外推断数据。</text>
+    <text x="1220" y="694" text-anchor="end" font-family="Microsoft YaHei" font-size="14" fill="#94A3B8">02</text>
+  </g>
+</svg>

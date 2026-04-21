@@ -1,0 +1,42 @@
+{
+  "job_id": "ccbadf3a03df40c6b178963128613bbb",
+  "status": "succeeded",
+  "created_at": "2026-04-21T12:00:51+00:00",
+  "updated_at": "2026-04-21T12:08:39+00:00",
+  "payload": {
+    "project_name": "smoke_test_local_retry6",
+    "source_text": "# 本地联调测试\n\n- 收入同比增长18%\n- 华东区贡献主要增量\n- 新客成本上升，复购改善\n",
+    "source_url": "",
+    "canvas_format": "ppt169",
+    "page_count": 2,
+    "target_audience": "",
+    "use_case": "",
+    "style_objective": "general_versatile",
+    "color_hint": "",
+    "image_strategy": "placeholder",
+    "icon_style": "tabler-outline",
+    "template_name": "",
+    "notes_style": "professional",
+    "language": "",
+    "uploaded_file_path": "",
+    "uploaded_file_name": ""
+  },
+  "artifacts": {
+    "project_path": "/Users/thanksjing/develope/开源项目/ppt-master/integrations/openwebui-ppt-service/storage/jobs/ccbadf3a03df40c6b178963128613bbb/project/smoke_test_local_retry6_ppt169_20260421",
+    "files": [
+      {
+        "kind": "native",
+        "name": "smoke_test_local_retry6_20260421_200839.pptx",
+        "path": "/Users/thanksjing/develope/开源项目/ppt-master/integrations/openwebui-ppt-service/storage/exports/ccbadf3a03df40c6b178963128613bbb/smoke_test_local_retry6_20260421_200839.pptx"
+      },
+      {
+        "kind": "svg_reference",
+        "name": "smoke_test_local_retry6_20260421_200839_svg.pptx",
+        "path": "/Users/thanksjing/develope/开源项目/ppt-master/integrations/openwebui-ppt-service/storage/exports/ccbadf3a03df40c6b178963128613bbb/smoke_test_local_retry6_20260421_200839_svg.pptx"
+      }
+    ]
+  },
+  "error": null,
+  "started_at": "2026-04-21T12:00:51+00:00",
+  "finished_at": "2026-04-21T12:08:39+00:00"
+}

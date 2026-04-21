@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <linearGradient id="titleLine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0F62FE"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="cardTop1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EFF6FF"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <linearGradient id="cardTop2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F0FDF4"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <linearGradient id="cardTop3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EFF6FF"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+    <filter id="softShadow" x="-15%" y="-15%" width="140%" height="150%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10"/>
+      <feOffset dx="0" dy="6" result="offsetBlur"/>
+      <feFlood flood-color="#0F172A" flood-opacity="0.10" result="shadowColor"/>
+      <feComposite in="shadowColor" in2="offsetBlur" operator="in" result="shadow"/>
+      <feMerge>
+        <feMergeNode in="shadow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="blueGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#38BDF8" flood-opacity="0.30" result="glowColor"/>
+      <feComposite in="glowColor" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1280" height="720" fill="url(#bgGrad)"/>
+
+  <g id="decorative-background">
+    <circle cx="1130" cy="108" r="88" fill="#38BDF8" fill-opacity="0.08"/>
+    <circle cx="1195" cy="160" r="48" fill="#16A34A" fill-opacity="0.08"/>
+    <circle cx="1065" cy="72" r="28" fill="#0F62FE" fill-opacity="0.06"/>
+    <rect x="54" y="96" width="1172" height="1" fill="#CBD5E1"/>
+  </g>
+
+  <g id="header">
+    <text x="60" y="82" font-family="Microsoft YaHei, Arial, sans-serif" font-size="30" font-weight="700" fill="#0F172A">增长由华东拉动，但获客效率承压、复购表现改善</text>
+    <rect x="60" y="102" width="320" height="6" rx="3" fill="url(#titleLine)" filter="url(#blueGlow)"/>
+    <text x="60" y="138" font-family="Microsoft YaHei, Arial, sans-serif" font-size="18" fill="#475569">当前业务信号呈现“收入增长 + 区域集中 + 拉新承压但留存改善”的组合特征。</text>
+  </g>
+
+  <g id="summary-band">
+    <rect x="60" y="164" width="1160" height="72" rx="16" fill="#F8FAFC" stroke="#CBD5E1"/>
+    <g id="summary-pill-1">
+      <rect x="84" y="184" width="166" height="32" rx="16" fill="#0F62FE" fill-opacity="0.10"/>
+      <text x="167" y="206" text-anchor="middle" font-family="Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="700" fill="#0F62FE">收入保持增长</text>
+    </g>
+    <g id="summary-pill-2">
+      <rect x="268" y="184" width="166" height="32" rx="16" fill="#16A34A" fill-opacity="0.10"/>
+      <text x="351" y="206" text-anchor="middle" font-family="Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="700" fill="#16A34A">区域增量集中</text>
+    </g>
+    <g id="summary-pill-3">
+      <rect x="452" y="184" width="248" height="32" rx="16" fill="#0F62FE" fill-opacity="0.08"/>
+      <text x="576" y="206" text-anchor="middle" font-family="Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="700" fill="#0F172A">拉新承压，存量经营改善</text>
+    </g>
+    <text x="744" y="206" font-family="Microsoft YaHei, Arial, sans-serif" font-size="15" fill="#475569">业务含义：增长并未失速，但增长质量正转向“区域聚焦 + 存量优化”。</text>
+  </g>
+
+  <g id="cards-row">
+    <g id="card-1-income-growth">
+      <rect x="60" y="268" width="370" height="350" rx="16" fill="#FFFFFF" filter="url(#softShadow)"/>
+      <rect x="60" y="268" width="370" height="100" rx="16" fill="url(#cardTop1)"/>
+      <rect x="60" y="352" width="370" height="1" fill="#CBD5E1"/>
+      <g id="card-1-icon">
+        <circle cx="110" cy="318" r="26" fill="#0F62FE" fill-opacity="0.12"/>
+        <use data-icon="tabler-outline/chart-bar" x="94" y="302" width="32" height="32" stroke="#0F62FE" fill="none"/>
+      </g>
+      <text x="148" y="312" font-family="Microsoft YaHei, Arial, sans-serif" font-size="24" font-weight="700" fill="#0F172A">收入同比增长18%</text>
+      <text x="148" y="338" font-family="Microsoft YaHei, Arial, sans-serif" font-size="16" fill="#475569">整体规模继续扩张，增长信号明确</text>
+
+      <text x="90" y="426" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="64" font-weight="700" fill="#0F62FE">18%</text>
+      <text x="90" y="462" font-family="Microsoft YaHei, Arial, sans-serif" font-size="18" fill="#475569">同比增幅</text>
+
+      <g id="card-1-detail-1">
+        <rect x="90" y="500" width="310" height="44" rx="12" fill="#F8FAFC"/>
+        <text x="110" y="528" font-family="Microsoft YaHei, Arial, sans-serif" font-size="17" fill="#0F172A">• 样本结果显示收入端延续上行</text>
+      </g>
+      <g id="card-1-detail-2">
+        <rect x="90" y="554" width="310" height="44" rx="12" fill="#F8FAFC"/>
+        <text x="110" y="582" font-family="Microsoft YaHei, Arial, sans-serif" font-size="17" fill="#0F172A">• 为后续经营判断提供积极基线</text>
+      </g>
+    </g>
+
+    <g id="card-2-east-china">
+      <rect x="455" y="268" width="370" height="350" rx="16" fill="#FFFFFF" filter="url(#softShadow)"/>
+      <rect x="455" y="268" width="370" height="100" rx="16" fill="url(#cardTop2)"/>
+      <rect x="455" y="352" width="370" height="1" fill="#CBD5E1"/>
+      <g id="card-2-icon">
+        <circle cx="505" cy="318" r="26" fill="#16A34A" fill-opacity="0.12"/>
+        <use data-icon="tabler-outline/map-pin" x="489" y="302" width="32" height="32" stroke="#16A34A" fill="none"/>
+      </g>
+      <text x="543" y="312" font-family="Microsoft YaHei, Arial, sans-serif" font-size="24" font-weight="700" fill="#0F172A">华东区贡献主要增量</text>
+      <text x="543" y="338" font-family="Microsoft YaHei, Arial, sans-serif" font-size="16" fill="#475569">区域贡献度更集中，增长来源更清晰</text>
+
+      <g id="card-2-center-highlight">
+        <rect x="515" y="404" width="250" height="88" rx="16" fill="#16A34A" fill-opacity="0.08" stroke="#16A34A" stroke-opacity="0.20"/>
+        <text x="640" y="439" text-anchor="middle" font-family="Microsoft YaHei, Arial, sans-serif" font-size="20" font-weight="700" fill="#16A34A">增量主驱动区域</text>
+        <text x="640" y="473" text-anchor="middle" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="34" font-weight="700" fill="#0F172A">华东</text>
+      </g>
+
+      <g id="card-2-detail-1">
+        <rect x="485" y="512" width="310" height="44" rx="12" fill="#F8FAFC"/>
+        <text x="505" y="540" font-family="Microsoft YaHei, Arial, sans-serif" font-size="17" fill="#0F172A">• 区域增量并非均匀分布</text>
+      </g>
+      <g id="card-2-detail-2">
+        <rect x="485" y="566" width="310" height="44" rx="12" fill="#F8FAFC"/>
+        <text x="505" y="594" font-family="Microsoft YaHei, Arial, sans-serif" font-size="17" fill="#0F172A">• 后续资源投放可优先聚焦重点区域</text>
+      </g>
+    </g>
+
+    <g id="card-3-efficiency-retention">
+      <rect x="850" y="268" width="370" height="350" rx="16" fill="#FFFFFF" filter="url(#softShadow)"/>
+      <rect x="850" y="268" width="370" height="100" rx="16" fill="url(#cardTop3)"/>
+      <rect x="850" y="352" width="370" height="1" fill="#CBD5E1"/>
+      <g id="card-3-icon">
+        <circle cx="900" cy="318" r="26" fill="#0F62FE" fill-opacity="0.12"/>
+        <use data-icon="tabler-outline/repeat" x="884" y="302" width="32" height="32" stroke="#0F62FE" fill="none"/>
+      </g>
+      <text x="938" y="312" font-family="Microsoft YaHei, Arial, sans-serif" font-size="24" font-weight="700" fill="#0F172A">新客成本上升，复购改善</text>
+      <text x="938" y="338" font-family="Microsoft YaHei, Arial, sans-serif" font-size="16" fill="#475569">拉新效率承压，但存量经营信号转好</text>
+
+      <g id="card-3-signal-top">
+        <rect x="885" y="404" width="140" height="86" rx="16" fill="#FEF2F2" stroke="#FECACA"/>
+        <use data-icon="tabler-outline/arrow-up-right" x="905" y="420" width="24" height="24" stroke="#DC2626" fill="none"/>
+        <text x="955" y="438" font-family="Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="700" fill="#DC2626">新客成本</text>
+        <text x="955" y="466" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="28" font-weight="700" fill="#DC2626">上升</text>
+      </g>
+      <g id="card-3-signal-bottom">
+        <rect x="1045" y="404" width="140" height="86" rx="16" fill="#F0FDF4" stroke="#BBF7D0"/>
+        <use data-icon="tabler-outline/repeat" x="1065" y="420" width="24" height="24" stroke="#16A34A" fill="none"/>
+        <text x="1115" y="438" font-family="Microsoft YaHei, Arial, sans-serif" font-size="16" font-weight="700" fill="#16A34A">复购表现</text>
+        <text x="1115" y="466" font-family="SimHei, Microsoft YaHei, Arial, sans-serif" font-size="28" font-weight="700" fill="#16A34A">改善</text>
+      </g>
+
+      <g id="card-3-detail-1">
+        <rect x="880" y="512" width="310" height="44" rx="12" fill="#F8FAFC"/>
+        <text x="900" y="540" font-family="Microsoft YaHei, Arial, sans-serif" font-size="17" fill="#0F172A">• 增长更依赖存量用户经营质量</text>
+      </g>
+      <g id="card-3-detail-2">
+        <rect x="880" y="566" width="310" height="44" rx="12" fill="#F8FAFC"/>
+        <text x="900" y="594" font-family="Microsoft YaHei, Arial, sans-serif" font-size="17" fill="#0F172A">• 后续需平衡拉新效率与留存投入</text>
+      </g>
+    </g>
+  </g>
+
+  <g id="footer">
+    <rect x="60" y="652" width="1160" height="1" fill="#CBD5E1"/>
+    <text x="60" y="680" font-family="Microsoft YaHei, Arial, sans-serif" font-size="14" fill="#94A3B8">说明：所有结论均直接来自源文档，未补充额外数据口径、时间范围或因果推断。</text>
+    <text x="1206" y="680" text-anchor="end" font-family="Microsoft YaHei, Arial, sans-serif" font-size="14" fill="#94A3B8">02</text>
+  </g>
+</svg>
