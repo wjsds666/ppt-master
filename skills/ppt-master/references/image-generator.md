@@ -1,49 +1,18 @@
+> See [`image-base.md`](./image-base.md) for the common framework. For the web sourcing path, see [`image-searcher.md`](./image-searcher.md).
+
 # Image_Generator Reference Manual
 
-> This file is the streamlined reference for the Image_Generator role. Common standards (SVG technical constraints, canvas formats, post-processing pipeline, etc.) are in [shared-standards.md](./shared-standards.md).
+Role definition for the **AI image generation path**: convert each `Acquire Via: ai` row into an optimized prompt, generate the image, and save it to `project/images/`.
 
-## Core Mission
-
-Receive the "Image Resource List" from the Design Specification & Content Outline output by the Strategist, create optimized prompts for each image pending generation, generate images via AI tools, and save them to the project's `images/` directory.
-
-**Trigger condition**: When AI image generation is needed (standalone use or invoked within pipeline)
-
-| Mode | Trigger | Description |
-|------|---------|-------------|
-| **Standalone** | Directly describe image needs | Generate single or multiple AI images |
-| **In-pipeline** | `generate-ppt` with AI image generation selected | Batch-generate image assets for a project |
-
-> Next step in pipeline: Executor generates SVGs
+**Trigger**: resource list rows with `Acquire Via: ai`. The role is loaded only when at least one such row exists.
 
 ---
 
-## 1. Input & Output
+## 1. Unified Prompt Structure
 
-### Input
+### 1.1 Standard Output Format
 
-- **Design Specification & Content Outline** (from Strategist): project theme, target audience, design style, color scheme, canvas format
-- **Image Resource List** (key input):
-
-  | Filename | Dimensions | Purpose | Type | Status | Generation Description |
-  |----------|-----------|---------|------|--------|----------------------|
-  | cover_bg.png | 1920x1080 | Cover background | Background | Pending | Modern tech abstract background, deep blue gradient |
-
-### Output
-
-| Deliverable | Path / Description | Requirements |
-|------------|-------------------|--------------|
-| Prompt document | `project/images/image_prompts.md` | **Must** be saved using file write tool — cannot just be output in conversation |
-| Optimized prompts | Individual prompt per image | Directly usable with AI image generation tools; doubles as alt text |
-| Image files | `project/images/` directory | Named per the resource list filenames |
-| Updated list | Status changes | "Pending" → "Generated" |
-
----
-
-## 2. Unified Prompt Structure
-
-### 2.1 Standard Output Format
-
-Every image must be output in the following format:
+Every image must be emitted into `image_prompts.md` in the following block format:
 
 ```markdown
 ### Image N: {filename}
@@ -53,19 +22,16 @@ Every image must be output in the following format:
 | Purpose   | {which page / what function} |
 | Type      | {Background / Illustration / Photography / Diagram / Decorative} |
 | Dimensions | {width}x{height} ({aspect ratio}) |
-| Original description | {description provided by user in the list} |
+| Original description | {Reference field from the resource list} |
 
 **Prompt**:
 {subject description}, {style directive}, {color directive}, {composition directive}, {quality directive}
-
-**Negative Prompt**:
-{elements to exclude}
 
 **Alt Text**:
 > {Description for accessibility and image captions}
 ```
 
-### 2.2 Prompt Components
+### 1.2 Prompt Components
 
 | Component | Description | Example |
 |-----------|-------------|---------|
@@ -74,17 +40,22 @@ Every image must be output in the following format:
 | Color directive | Color scheme | `color palette: navy blue (#1E3A5F), gold (#D4AF37)` |
 | Composition directive | Layout ratio | `16:9 aspect ratio`, `centered composition` |
 | Quality directive | Resolution quality | `high quality`, `4K resolution`, `sharp details` |
-| Negative prompt | Exclude elements | `text, watermark, blurry, low quality` |
 
-### 2.3 Style Keywords Quick Reference
+### 1.3 Style Keywords Quick Reference
 
 | Design Style | Recommended Image Style | Core Keywords |
 |-------------|------------------------|---------------|
 | General Versatile | Modern illustration, flat design | `modern`, `flat design`, `gradient`, `vibrant colors` |
 | General Consulting | Clean professional, corporate | `professional`, `clean`, `corporate`, `minimalist` |
 | Top Consulting | Premium minimal, abstract geometric | `premium`, `sophisticated`, `geometric`, `abstract`, `elegant` |
+| Technology / SaaS | Futuristic, digital | `futuristic`, `digital`, `tech grid`, `circuit pattern`, `neon accents`, `dark background` |
+| Education / Training | Friendly, instructional | `friendly`, `instructional`, `whiteboard style`, `pastel colors`, `simple shapes` |
+| Marketing / Branding | Bold, energetic | `bold`, `energetic`, `dynamic composition`, `vivid colors`, `action-oriented` |
+| Healthcare / Medical | Clean, reassuring | `clean`, `clinical`, `soft blue-green palette`, `organic curves`, `reassuring` |
+| Finance / Banking | Conservative, trustworthy | `conservative`, `trustworthy`, `blue-gray palette`, `structured`, `precise` |
+| Creative / Design | Artistic, experimental | `artistic`, `experimental`, `asymmetric`, `textured`, `hand-crafted feel` |
 
-### 2.4 Color Integration Method
+### 1.4 Color Integration Method
 
 Extract colors from design spec, convert to prompt directives:
 
@@ -96,7 +67,7 @@ Accent: #D4AF37 (Gold)        →  "gold accent (#D4AF37)"
 Full directive: "color palette: deep navy blue (#1E3A5F), light gray (#F8F9FA), gold accent (#D4AF37)"
 ```
 
-### 2.5 Canvas Format & Aspect Ratio
+### 1.5 Canvas Format & Aspect Ratio
 
 | Canvas Format | Background Aspect Ratio | Recommended Resolution |
 |--------------|------------------------|----------------------|
@@ -108,19 +79,39 @@ Full directive: "color palette: deep navy blue (#1E3A5F), light gray (#F8F9FA), 
 
 > Supported aspect ratios: `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9` (Gemini also supports `1:4`, `1:8`, `4:1`, `8:1`)
 
+### 1.6 Multi-Image Coherence Strategy
+
+When generating multiple images for a single deck, visual coherence is critical. Use a **Deck Style Anchor** — a shared prefix of 15-25 words prepended to every image prompt.
+
+**Construction**: Combine style keywords (Section 1.3) + color directive (Section 1.4) + quality directive into one reusable prefix.
+
+**Example**:
+```
+Deck Style Anchor:
+"modern flat design illustration, color palette: deep navy (#1E3A5F), light gray (#F8F9FA), gold accent (#D4AF37), clean minimalist, high quality, 4K"
+
+Image 1 prompt: [Deck Style Anchor], abstract technology network showing connected nodes...
+Image 2 prompt: [Deck Style Anchor], team of professionals collaborating at a desk...
+Image 3 prompt: [Deck Style Anchor], growth chart with upward trending line...
+```
+
+**Exception**: Background images may replace style keywords with `background`, `backdrop`, `negative space for text overlay` while keeping the same color directive. This ensures color consistency without compromising background functionality.
+
+**Rule**: Define the Deck Style Anchor once in the prompt document header (Section 4), then reference it in every individual prompt.
+
 ---
 
-## 3. Image Type Classification & Handling
+## 2. Image Type Classification & Handling
 
 ### Type Determination Flow
 
-1. Full-page / large-area backdrop → **Background** (3.1)
-2. Real scenes / people / products → **Photography** (3.2)
-3. Flat / illustration / cartoon style → **Illustration** (3.3)
-4. Process / architecture / relationships → **Diagram** (3.4)
-5. Partial decoration / texture → **Decorative Pattern** (3.5)
+1. Full-page / large-area backdrop → **Background** (2.1)
+2. Real scenes / people / products → **Photography** (2.2)
+3. Flat / illustration / cartoon style → **Illustration** (2.3)
+4. Process / architecture / relationships → **Diagram** (2.4)
+5. Partial decoration / texture → **Decorative Pattern** (2.5)
 
-### 3.1 Background
+### 2.1 Background
 
 **Identifying characteristics**: Full-page background for covers or chapter pages; must support text overlay
 
@@ -133,9 +124,7 @@ Full directive: "color palette: deep navy blue (#1E3A5F), light gray (#F8F9FA), 
 
 **Template**: `Abstract {theme element} background, {style} style, {primary color} to {secondary color} gradient, subtle {decorative elements}, clean negative space in center for text overlay, {aspect ratio} aspect ratio, high resolution, professional presentation background`
 
-**Negative prompt**: `text, letters, watermark, faces, busy patterns, high contrast details`
-
-### 3.2 Photography
+### 2.2 Photography
 
 **Identifying characteristics**: Real scenes, people, products, architecture — photographic quality
 
@@ -148,9 +137,7 @@ Full directive: "color palette: deep navy blue (#1E3A5F), light gray (#F8F9FA), 
 
 **Template**: `{subject description}, professional photography, {lighting type} lighting, {background type} background, color grading matching {color scheme}, high quality, sharp focus, 8K resolution`
 
-**Negative prompt**: `watermark, text overlay, artificial, CGI, illustration, cartoon, distorted faces`
-
-### 3.3 Illustration
+### 2.3 Illustration
 
 **Identifying characteristics**: Flat design, vector style, cartoon, concept diagrams
 
@@ -163,9 +150,7 @@ Full directive: "color palette: deep navy blue (#1E3A5F), light gray (#F8F9FA), 
 
 **Template**: `{subject description}, {illustration style} illustration style, {detail level} with clean lines, color palette: {color list}, {background type} background, professional {purpose} illustration`
 
-**Negative prompt**: `realistic, photography, 3D render, complex textures, watermark`
-
-### 3.4 Diagram
+### 2.4 Diagram
 
 **Identifying characteristics**: Flowcharts, architecture diagrams, concept relationship maps, data visualizations
 
@@ -178,9 +163,7 @@ Full directive: "color palette: deep navy blue (#1E3A5F), light gray (#F8F9FA), 
 
 **Template**: `{diagram type} diagram showing {content description}, {component description} connected by {connection method}, {style} style with {color scheme}, white background, clear labels, professional technical diagram`
 
-**Negative prompt**: `cluttered, messy, overlapping elements, dark background, realistic, photography`
-
-### 3.5 Decorative Pattern
+### 2.5 Decorative Pattern
 
 **Identifying characteristics**: Partial decoration, textures, borders, divider elements
 
@@ -193,35 +176,35 @@ Full directive: "color palette: deep navy blue (#1E3A5F), light gray (#F8F9FA), 
 
 **Template**: `{pattern type} decorative pattern, {style} style, {color scheme}, {background type} background, subtle and elegant, suitable for {purpose}`
 
-**Negative prompt**: `busy, cluttered, high contrast, distracting, photorealistic`
-
 ---
 
-## 4. Image Generation Workflow
+## 3. Generation Workflow
 
-### 4.1 Analysis Phase
+### 3.1 Prompt Generation Phase
 
-1. Read the design spec; understand overall project style
-2. Extract color scheme, canvas format, target audience
-3. Analyze each image in the resource list individually
-4. Determine each image's type (refer to Section 3)
-
-### 4.2 Prompt Generation Phase
-
-For each image with "Pending" status:
+For each image with `Acquire Via: ai` and `Status: Pending`:
 
 1. **Determine type** → Background / Photography / Illustration / Diagram / Decorative
 2. **Understand purpose** → Which page? What function?
-3. **Analyze original description** → Information from the user's "Generation description"
-4. **Apply type-specific key points** → Reference the corresponding type's table
-5. **Generate optimized prompt** → Use the 2.1 standard output format
+3. **Analyze the Reference field** → User's intent description
+4. **Apply type-specific key points** → Reference §2's table for that type
+5. **Generate optimized prompt** → Use the §1.1 standard output format
 6. **Save prompt document** → **Must** write to `project/images/image_prompts.md`
 
-### 4.3 Image Generation Phase
+### 3.2 Image Generation Phase
 
-> Prerequisite: Section 4.2 must be complete; `images/image_prompts.md` must exist
+> Prerequisite: §3.1 must be complete; `images/image_prompts.md` must exist.
 
-#### Method 1: Unified CLI Tool (Recommended)
+#### Path Selection (Deterministic)
+
+| Trigger | Path | Mechanism |
+|---------|------|-----------|
+| **Default** — no explicit override from the user | **Path A**: `image_gen.py` CLI | Uses `.env` `IMAGE_BACKEND` configuration |
+| **User explicitly names the host's native image tool** (e.g. "use Codex's built-in image generation", "use Antigravity's image tool") | **Path B**: Host-native tool | Agent invokes the host's own image generation capability and saves outputs to `project/images/` |
+
+Agent must NOT silently switch paths based on perceived host capability. Path B is triggered only by an explicit user instruction for this project or this generation batch. In the absence of such instruction, Path A is the unconditional default.
+
+#### Path A — `image_gen.py` CLI (Default)
 
 ```bash
 python3 scripts/image_gen.py "your prompt" \
@@ -233,13 +216,12 @@ python3 scripts/image_gen.py "your prompt" \
 
 | Parameter | Short | Description | Default |
 |-----------|-------|-------------|---------|
-| `prompt` | - | Positive prompt (positional arg) | - |
-| `--negative_prompt` | `-n` | Negative prompt | None |
+| `prompt` | - | Prompt (positional arg) | - |
 | `--aspect_ratio` | - | Image aspect ratio | `1:1` |
 | `--image_size` | - | Size (`1K`/`2K`/`4K`) | `1K` |
 | `--output` | `-o` | Output directory | Current directory |
 | `--filename` | `-f` | Output filename (no extension) | Auto-named |
-| `--backend` | `-b` | Override backend (`gemini`/`openai`/`stability`/`bfl`/`ideogram`/`qwen`/`zhipu`/`volcengine`/`siliconflow`/`fal`/`replicate`) | None |
+| `--backend` | `-b` | Override backend (see `--list-backends` for options) | None |
 | `--model` | `-m` | Model name | Backend default |
 | `--list-backends` | - | Print support tiers and exit | `false` |
 
@@ -253,51 +235,48 @@ Precedence:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `IMAGE_BACKEND` | Required | `gemini` / `openai` / `stability` / `bfl` / `ideogram` / `qwen` / `zhipu` / `volcengine` / `siliconflow` / `fal` / `replicate` |
+| `IMAGE_BACKEND` | Required | Backend identifier; run `image_gen.py --list-backends` for the current set |
 | `{PROVIDER}_API_KEY` | Required | Provider-specific API key, e.g. `GEMINI_API_KEY`, `ZHIPU_API_KEY` |
 | `{PROVIDER}_BASE_URL` | Optional | Provider-specific custom endpoint |
 | `{PROVIDER}_MODEL` | Optional | Provider-specific model override |
 
-> Use provider-specific names only: `GEMINI_API_KEY`, `OPENAI_API_KEY`, `STABILITY_API_KEY`, `BFL_API_KEY`, `IDEOGRAM_API_KEY`, `QWEN_API_KEY` / `DASHSCOPE_API_KEY`, `ZHIPU_API_KEY` / `BIGMODEL_API_KEY`, `VOLCENGINE_API_KEY` / `ARK_API_KEY`, `SILICONFLOW_API_KEY`, `FAL_KEY`, and `REPLICATE_API_TOKEN`.
+> Use provider-specific names only (e.g. `GEMINI_API_KEY`, `OPENAI_API_KEY`). See `.env.example` for the full set per backend.
 
 > `IMAGE_API_KEY`, `IMAGE_MODEL`, and `IMAGE_BASE_URL` are intentionally unsupported.
 
 > If `.env` or the current environment contains multiple provider configs, `IMAGE_BACKEND` explicitly selects the active one.
 
-**Support tiers (recommended usage)**:
-- Core: `gemini`, `openai`, `qwen`, `zhipu`, `volcengine`
-- Extended: `stability`, `bfl`, `ideogram`
-- Experimental: `siliconflow`, `fal`, `replicate`
+**Support tiers (recommended usage)**: Core / Extended / Experimental. Run `image_gen.py --list-backends` for the current assignments.
 
 **Generation pacing (mandatory)**:
 - Execute only one generation command at a time; wait for file confirmation before the next
 - Recommend 2-5 second intervals between images to avoid concurrency failures
-- If failure/no output occurs, halt the queue, check `IMAGE_BACKEND`, provider-specific credentials, and the output directory, then resume
 
-#### Method 2: Auto-generation
+#### Path B — Host-Native Image Tool (On Explicit User Request)
 
-Directly call image generation API, download and save to `project/images/` directory.
+Triggered only when the user explicitly asks the skill to use the host's built-in image generation (e.g. Codex, Antigravity, or any other host that provides a native image tool).
 
-#### Method 3: Gemini Web Interface
+- Agent invokes the host's native image tool directly; prompts come from the same `image_prompts.md`
+- Outputs **must** land at `project/images/<filename-from-resource-list>` with dimensions matching the Image Resource List
+- Executor downstream is path-agnostic — no spec change required between Path A and Path B
 
-1. Generate images in [Gemini](https://gemini.google.com/)
-2. Select **Download full size** for high-resolution version
-3. Remove watermark: `python3 scripts/gemini_watermark_remover.py <image_path>`
-4. Place processed images in `project/images/` directory
+#### AI-specific Failure Handling (extends image-base.md §5)
 
-#### Method 4: Manual Generation (Other AI Platforms)
+If a single backend fails twice in a row:
 
-Prompts are saved in `images/image_prompts.md`; inform the user of the file location. User generates on Midjourney, DALL-E, Stable Diffusion, etc. and places images in `project/images/` directory.
+1. Per the shared rule, mark the row `Needs-Manual` after one retry — do **not** silently switch backends
+2. Report the failure to the user: filename, prompt used, error message
+3. Suggest the user manually generate the image elsewhere and place it at `project/images/<filename>`. If the alternate platform watermarks outputs (e.g. Gemini web), the repository includes `scripts/gemini_watermark_remover.py`
 
-### 4.4 Verification Phase
+#### Guardrails (Both Paths)
 
-- Confirm all images are saved to `images/` directory
-- Check filenames match the resource list
-- Update image resource list status to "Generated"
+- Agent must NOT claim an image is generated without producing an actual file at the expected path
+- Agent must NOT mark an image as `Needs-Manual` without a real generation attempt having failed
+- Status transitions are evidence-driven: `Pending` -> `Generated` (file exists at expected path) or `Pending` -> `Needs-Manual` (generation attempted and failed after one retry)
 
 ---
 
-## 5. Prompt Document Template
+## 4. Prompt Document Template
 
 Use the following structure when creating `project/images/image_prompts.md`:
 
@@ -307,6 +286,7 @@ Use the following structure when creating `project/images/image_prompts.md`:
 > Project: {project_name}
 > Generated: {date}
 > Color scheme: Primary {#HEX} | Secondary {#HEX} | Accent {#HEX}
+> Deck Style Anchor: {15–25 word prefix per §1.6}
 
 ---
 
@@ -330,7 +310,7 @@ Use the following structure when creating `project/images/image_prompts.md`:
 | Original description | Modern tech abstract background, deep blue gradient |
 
 **Prompt**:
-Abstract futuristic background with flowing digital waves...
+[Deck Style Anchor], Abstract futuristic background with flowing digital waves...
 
 **Alt Text**:
 > Modern tech abstract background with deep blue gradient, digital waves, and particle effects
@@ -340,35 +320,16 @@ Abstract futuristic background with flowing digital waves...
 ## Usage Instructions
 
 1. Copy the "Prompt" above into an AI image generation tool
-2. Recommended platforms: Midjourney / DALL-E 3 / Gemini / Stable Diffusion
+2. Recommended platforms: gpt-image-2 / Midjourney / DALL-E 3 / Gemini / Stable Diffusion
 3. Rename generated images to the corresponding filenames
 4. Place in the `images/` directory
 ```
 
 ---
 
-## 6. Negative Prompt Quick Reference
+## 5. Common Issues
 
-### By Image Type
-
-| Type | Recommended Negative Prompt |
-|------|---------------------------|
-| Background | `text, letters, watermark, faces, busy patterns, high contrast details` |
-| Photography | `watermark, text overlay, artificial, CGI, illustration, cartoon, distorted faces` |
-| Illustration | `realistic, photography, 3D render, complex textures, watermark` |
-| Diagram | `cluttered, messy, overlapping elements, dark background, realistic` |
-| Decorative pattern | `busy, cluttered, high contrast, distracting, photorealistic` |
-
-### Universal Negative Prompts
-
-- **Standard**: `text, watermark, signature, blurry, distorted, low quality`
-- **Extended** (people scenarios): `text, watermark, signature, blurry, low quality, distorted, extra fingers, mutated hands, poorly drawn face, bad anatomy, extra limbs, disfigured, deformed`
-
----
-
-## 7. Common Issues
-
-### Default Inference When No "Generation Description" Provided
+### Default Inference When No `Reference` Provided
 
 | Purpose | Default Inference |
 |---------|------------------|
@@ -380,65 +341,27 @@ Abstract futuristic background with flowing digital waves...
 
 ### When Images Are Unsatisfactory
 
-Provide prompt variants for user selection: Variant A (more abstract), Variant B (more concrete), Variant C (different color tone).
+Diagnose the problem category and apply a targeted prompt fix:
+
+| Problem | Diagnosis | Prompt Adjustment |
+|---------|-----------|-------------------|
+| Wrong style | Image looks photorealistic when flat design was intended | Change style directive: replace `photography` with `flat design illustration` |
+| Wrong colors | Colors don't match the design spec palette | Strengthen color directive: add explicit HEX codes, repeat color names |
+| Wrong composition | Subject is off-center or layout doesn't fit the slide | Adjust composition directive: add `centered composition`, `rule of thirds`, or `wide negative space on left` |
+| Wrong subject | Image depicts something different from what was described | Rewrite subject description with more specificity and concrete details |
+| Low quality | Image is blurry, has artifacts, or lacks detail | Add `highly detailed, sharp focus, professional quality, 8K resolution` |
+
+**Variant workflow**:
+1. Keep the original prompt as "Variant A" in `image_prompts.md`
+2. Create modified prompt as "Variant B" with targeted fixes from the table above
+3. If needed, create "Variant C" with a different stylistic approach
+4. Label all variants clearly so the user can compare results
 
 ---
 
-## 8. Role Collaboration
+## 6. Forbidden
 
-### Handoff with Strategist
-
-| Direction | Content |
-|-----------|---------|
-| Receives | Design Specification & Content Outline (with image resource list) |
-| Trigger condition | User selected "C) AI generation" in "Image usage" |
-| Key information | Color scheme, design style, canvas format |
-
-### Handoff with Executor
-
-| Direction | Content |
-|-----------|---------|
-| Delivers | All images placed in `project/images/` directory |
-| Executor reference | `<image href="../images/xxx.png" .../>` |
-| Path note | SVGs in `svg_output/`, images in `images/`; use relative path `../images/` |
-
----
-
-## 9. Task Completion Checkpoint
-
-### Must-complete Items
-
-- [ ] Created prompt document `project/images/image_prompts.md`
-- [ ] Each image has: type determination + optimized prompt + negative prompt + Alt Text
-- [ ] Uses unified output format (2.1 standard format)
-- [ ] Phase completion confirmation output
-
-### Image Readiness (at least one must be satisfied)
-
-- [ ] All images saved to `project/images/` directory
-- [ ] Or: User clearly informed to self-generate using `image_prompts.md`
-
-### Pipeline Flow
-
-- [ ] User prompted to proceed to next step (switch to Executor role)
-
-> **Critical check**: If `images/image_prompts.md` was not created, or the output format does not comply with 2.1 standard, the task is NOT complete.
-
-### Completion Confirmation Output Format
-
-```markdown
-## Image_Generator Phase Complete
-
-- [x] Created prompt document `project/images/image_prompts.md`
-- [x] Generated optimized prompts for X images
-- [x] All images saved to `images/` directory
-- [x] Updated image resource list status
-
-**Image Status Summary**:
-
-| Filename | Type | Dimensions | Status |
-|----------|------|-----------|--------|
-| cover_bg.png | Background | 1920x1080 | Generated |
-
-**Next step**: Switch to Executor role to begin SVG generation
-```
+- Generating prompts for `web` rows — those go through [`image-searcher.md`](./image-searcher.md)
+- Brand names or HEX codes inside the subject description (degrades output)
+- Mixed Deck Style Anchors across images in the same deck (breaks coherence)
+- Placing an image without updating `image_prompts.md` and the resource list status

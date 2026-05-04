@@ -5,21 +5,27 @@ Unified Image Generation Tool
 Dispatches to the appropriate backend based on explicit provider configuration.
 
 Backend selection (`IMAGE_BACKEND` in `.env` or the current process environment):
-  IMAGE_BACKEND=gemini     -> Gemini backend (google-genai SDK)
-  IMAGE_BACKEND=openai     -> OpenAI-compatible backend (openai SDK)
-  IMAGE_BACKEND=stability  -> Stability AI backend
-  IMAGE_BACKEND=bfl        -> Black Forest Labs FLUX backend
-  IMAGE_BACKEND=ideogram   -> Ideogram backend
-  IMAGE_BACKEND=qwen       -> Alibaba Qwen image backend
-  IMAGE_BACKEND=zhipu      -> Zhipu GLM-Image backend
-  IMAGE_BACKEND=volcengine -> Volcengine Seedream backend
+  IMAGE_BACKEND=gemini      -> Gemini backend (google-genai SDK)
+  IMAGE_BACKEND=openai      -> OpenAI-compatible backend (openai SDK)
+  IMAGE_BACKEND=minimax     -> MiniMax image backend
+  IMAGE_BACKEND=stability   -> Stability AI backend
+  IMAGE_BACKEND=bfl         -> Black Forest Labs FLUX backend
+  IMAGE_BACKEND=ideogram    -> Ideogram backend
+  IMAGE_BACKEND=qwen        -> Alibaba Qwen image backend
+  IMAGE_BACKEND=zhipu       -> Zhipu GLM-Image backend
+  IMAGE_BACKEND=volcengine  -> Volcengine Seedream backend
+  IMAGE_BACKEND=modelscope  -> ModelScope backend
   IMAGE_BACKEND=siliconflow -> SiliconFlow backend
-  IMAGE_BACKEND=fal        -> fal.ai backend
-  IMAGE_BACKEND=replicate  -> Replicate backend
+  IMAGE_BACKEND=fal         -> fal.ai backend
+  IMAGE_BACKEND=replicate   -> Replicate backend
+  IMAGE_BACKEND=openrouter  -> OpenRouter backend
 
-Configuration source:
+Configuration source (process env wins, `.env` is the fallback layer):
   1. Current process environment variables
-  2. Project-root `.env` as a fallback layer
+  2. The first `.env` found among:
+     - Current working directory
+     - Repo root (when running from a clone)
+     - `~/.ppt-master/.env` (user-level config)
 
 Supported keys:
   IMAGE_BACKEND    (required) backend name
@@ -40,11 +46,30 @@ import sys
 import argparse
 from pathlib import Path
 
-ENV_PATH = Path(__file__).resolve().parents[3] / ".env"
+def _resolve_env_path() -> Path:
+    """
+    Locate a `.env` file across the deploy modes PPT Master supports.
+
+    Returns the first existing candidate; if none exist, returns the CWD path
+    (used purely as a non-existent fallback so `_load_image_env_file` no-ops).
+    """
+    candidates = [
+        Path.cwd() / ".env",                              # working directory (skill mode)
+        Path(__file__).resolve().parents[3] / ".env",     # repo root (clone mode)
+        Path.home() / ".ppt-master" / ".env",             # user-level config
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return candidates[0]
+
+
+ENV_PATH = _resolve_env_path()
 IMAGE_ENV_PREFIXES = (
     "IMAGE_",
     "GEMINI_",
     "OPENAI_",
+    "MINIMAX_",
     "STABILITY_",
     "BFL_",
     "IDEOGRAM_",
@@ -54,9 +79,11 @@ IMAGE_ENV_PREFIXES = (
     "BIGMODEL_",
     "VOLCENGINE_",
     "ARK_",
+    "MODELSCOPE_",
     "SILICONFLOW_",
     "FAL_",
     "REPLICATE_",
+    "OPENROUTER_",
 )
 DEPRECATED_IMAGE_KEYS = {
     "IMAGE_API_KEY",
@@ -87,9 +114,17 @@ BACKEND_REGISTRY = {
         "module": "backend_openai",
         "tier": "core",
         "label": "OpenAI / OpenAI-compatible",
-        "default_model": "gpt-image-1",
+        "default_model": "gpt-image-2",
         "key_hint": "OPENAI_API_KEY",
         "aliases": ["openai-compatible", "openai_compatible"],
+    },
+    "minimax": {
+        "module": "backend_minimax",
+        "tier": "experimental",
+        "label": "MiniMax Image",
+        "default_model": "image-01",
+        "key_hint": "MINIMAX_API_KEY",
+        "aliases": ["minimaxi"],
     },
     "qwen": {
         "module": "backend_qwen",
@@ -114,6 +149,14 @@ BACKEND_REGISTRY = {
         "default_model": "doubao-seedream-4-5-251128",
         "key_hint": "VOLCENGINE_API_KEY / ARK_API_KEY",
         "aliases": ["ark", "doubao", "seedream"],
+    },
+    "modelscope": {
+        "module": "backend_modelscope",
+        "tier": "experimental",
+        "label": "ModelScope",
+        "default_model": "Tongyi-MAI/Z-Image-Turbo",
+        "key_hint": "MODELSCOPE_API_KEY",
+        "aliases": ["modelscope", "model-scope"]
     },
     "stability": {
         "module": "backend_stability",
@@ -161,6 +204,13 @@ BACKEND_REGISTRY = {
         "default_model": "black-forest-labs/flux-1.1-pro",
         "key_hint": "REPLICATE_API_TOKEN / REPLICATE_API_KEY",
     },
+    "openrouter": {
+        "module": "backend_openrouter",
+        "tier": "experimental",
+        "label": "OpenRouter",
+        "default_model": "google/gemini-3.1-flash-image-preview",
+        "key_hint": "OPENROUTER_API_KEY",
+    },
 }
 
 TIER_ORDER = {"core": 0, "extended": 1, "experimental": 2}
@@ -181,7 +231,7 @@ def _strip_env_quotes(value: str) -> str:
 
 def _load_image_env_file() -> None:
     """
-    Load image generation config from the project-root `.env` as a fallback layer.
+    Load image generation config from the resolved `.env` as a fallback layer.
 
     Existing process environment variables win over `.env`.
     """
@@ -257,10 +307,26 @@ def _build_backend_aliases() -> dict[str, str]:
 BACKEND_ALIASES = _build_backend_aliases()
 
 
+_BACKEND_PIP_HINTS = {
+    "gemini": "google-genai",
+    "openai": "openai",
+}
+
+
 def _load_backend(canonical_name: str) -> tuple[object, str]:
     """Import and return the configured backend module."""
     module_name = f"image_backends.{BACKEND_REGISTRY[canonical_name]['module']}"
-    module = __import__(module_name, fromlist=["*"])
+    try:
+        module = __import__(module_name, fromlist=["*"])
+    except ImportError as exc:
+        pip_name = _BACKEND_PIP_HINTS.get(canonical_name, exc.name or "<dependency>")
+        print(
+            f"Error: backend '{canonical_name}' needs a package that is not installed.\n"
+            f"Missing: {exc.name}\n"
+            f"Run: pip install {pip_name}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
     return module, canonical_name
 
 
@@ -311,8 +377,8 @@ def _resolve_backend() -> tuple[object, str]:
         f"Supported backends: {supported}\n"
         "\n"
         "Example:\n"
-        "  IMAGE_BACKEND=gemini\n"
-        "  GEMINI_API_KEY=your-key\n"
+        "  IMAGE_BACKEND=openai\n"
+        "  OPENAI_API_KEY=sk-xxx\n"
     )
     sys.exit(1)
 
@@ -325,10 +391,6 @@ def main() -> None:
     parser.add_argument(
         "prompt", nargs="?", default="a beautiful landscape",
         help="The text prompt for image generation."
-    )
-    parser.add_argument(
-        "--negative_prompt", "-n", default=None,
-        help="Negative prompt to specify what to avoid."
     )
     parser.add_argument(
         "--aspect_ratio", default="1:1", choices=ALL_ASPECT_RATIOS,
@@ -382,7 +444,6 @@ def main() -> None:
     try:
         backend.generate(
             prompt=args.prompt,
-            negative_prompt=args.negative_prompt,
             aspect_ratio=args.aspect_ratio,
             image_size=args.image_size,
             output_dir=args.output,
