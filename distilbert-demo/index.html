@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DistilBERT 讲课演示 | 知识蒸馏可视化</title>
+  <meta name="description" content="一个围绕知识蒸馏和 DistilBERT 的轻量静态演示页。展示硬标签、软标签、Teacher-Student 关系和模型压缩收益。" />
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg2: #0d1728;
+      --panel: rgba(10, 18, 32, 0.72);
+      --panel-strong: #101c31;
+      --line: rgba(164, 194, 255, 0.16);
+      --text: #e8f0ff;
+      --muted: #96a8c9;
+      --primary: #4ea1ff;
+      --primary-2: #76d7ff;
+      --accent: #31d08b;
+      --warning: #ff8a5b;
+      --danger: #ff6b6b;
+      --shadow: 0 24px 70px rgba(1, 8, 22, 0.45);
+      --radius-xl: 32px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --max: 1220px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(78, 161, 255, 0.20), transparent 32%),
+        radial-gradient(circle at 84% 8%, rgba(49, 208, 139, 0.16), transparent 26%),
+        linear-gradient(180deg, #050b16 0%, var(--bg) 35%, #081427 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 88%);
+      opacity: 0.8;
+    }
+
+    a { color: inherit; }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(var(--max), calc(100vw - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .brand-mark {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 0 0 8px rgba(78, 161, 255, 0.12);
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: var(--muted);
+      padding: 10px 14px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      transition: 180ms ease;
+      font-size: 14px;
+    }
+
+    .nav a:hover {
+      color: var(--text);
+      border-color: var(--line);
+      transform: translateY(-1px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 28px;
+      align-items: center;
+      min-height: calc(100vh - 84px);
+      padding: 18px 0 42px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(78, 161, 255, 0.12);
+      color: #b8d6ff;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid rgba(78, 161, 255, 0.18);
+    }
+
+    .hero h1 {
+      margin: 18px 0 14px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(42px, 6vw, 78px);
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 52rem;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.72;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: 180ms ease;
+      font-weight: 700;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), #2f7cf8);
+      color: white;
+      box-shadow: 0 12px 24px rgba(78, 161, 255, 0.22);
+    }
+
+    .btn.primary:hover { transform: translateY(-1px); }
+    .btn.ghost {
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+      border-color: var(--line);
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .metric {
+      padding: 16px 15px;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .metric b {
+      display: block;
+      font-size: 24px;
+      letter-spacing: -0.04em;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .hero-visual {
+      position: relative;
+      padding: 18px;
+      border-radius: 36px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 560px;
+    }
+
+    .hero-visual::before,
+    .hero-visual::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(30px);
+      opacity: 0.8;
+    }
+
+    .hero-visual::before {
+      width: 240px;
+      height: 240px;
+      background: rgba(78, 161, 255, 0.22);
+      top: -60px;
+      right: -70px;
+    }
+
+    .hero-visual::after {
+      width: 180px;
+      height: 180px;
+      background: rgba(49, 208, 139, 0.18);
+      left: -40px;
+      bottom: 18px;
+    }
+
+    .visual-frame {
+      position: relative;
+      height: 100%;
+      min-height: 524px;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(16, 28, 49, 0.84), rgba(8, 16, 30, 0.92)),
+        linear-gradient(135deg, rgba(78,161,255,0.14), rgba(49,208,139,0.10));
+      border: 1px solid rgba(255,255,255,0.10);
+      overflow: hidden;
+    }
+
+    .visual-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 18px 0;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .visual-body {
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 14px;
+      padding: 18px;
+    }
+
+    .robot-scene {
+      display: grid;
+      grid-template-columns: 1fr auto 0.86fr;
+      align-items: center;
+      gap: 12px;
+      min-height: 210px;
+    }
+
+    .robot-card {
+      position: relative;
+      border-radius: 24px;
+      padding: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      min-height: 195px;
+      overflow: hidden;
+    }
+
+    .robot-card.teacher::before,
+    .robot-card.student::before {
+      content: "";
+      position: absolute;
+      inset: auto -10% -50% -10%;
+      height: 130px;
+      border-radius: 50%;
+      filter: blur(22px);
+      opacity: 0.8;
+    }
+
+    .robot-card.teacher::before {
+      background: rgba(78,161,255,0.18);
+    }
+
+    .robot-card.student::before {
+      background: rgba(49,208,139,0.15);
+    }
+
+    .robot-label {
+      position: relative;
+      z-index: 1;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .robot-body {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-width: 140px;
+      margin: 0 auto;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .robot-face {
+      position: absolute;
+      inset: 22% 20% 34% 20%;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.92);
+    }
+
+    .robot-face::before,
+    .robot-face::after {
+      content: "";
+      position: absolute;
+      top: 28%;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #0a1120;
+      box-shadow: 0 0 0 5px rgba(10, 17, 32, 0.08);
+    }
+
+    .robot-face::before { left: 22%; }
+    .robot-face::after { right: 22%; }
+
+    .robot-mouth {
+      position: absolute;
+      left: 50%;
+      bottom: 28%;
+      transform: translateX(-50%);
+      width: 32px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(10, 17, 32, 0.72);
+    }
+
+    .robot-arms {
+      position: absolute;
+      inset: 46% -12px auto -12px;
+      height: 52px;
+      border-top: 10px solid transparent;
+    }
+
+    .robot-arms::before,
+    .robot-arms::after {
+      content: "";
+      position: absolute;
+      top: 8px;
+      width: 24px;
+      height: 72px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+
+    .teacher .robot-arms { color: rgba(78, 161, 255, 0.82); }
+    .student .robot-arms { color: rgba(49, 208, 139, 0.82); }
+    .robot-arms::before { left: 8px; transform: rotate(18deg); }
+    .robot-arms::after { right: 8px; transform: rotate(-18deg); }
+
+    .teacher .robot-body { outline: 2px solid rgba(78, 161, 255, 0.22); }
+    .student .robot-body { outline: 2px solid rgba(49, 208, 139, 0.22); }
+
+    .arrow-wrap {
+      display: grid;
+      place-items: center;
+      gap: 12px;
+    }
+
+    .arrow-pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(78,161,255,0.12);
+      border: 1px solid rgba(78,161,255,0.2);
+      color: #cde3ff;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .arrow {
+      position: relative;
+      width: 170px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(78,161,255,0.1), rgba(78,161,255,0.95), rgba(49,208,139,0.7));
+      box-shadow: 0 0 24px rgba(78, 161, 255, 0.25);
+    }
+
+    .arrow::after {
+      content: "";
+      position: absolute;
+      right: -3px;
+      top: 50%;
+      transform: translateY(-50%);
+      border-left: 18px solid var(--accent);
+      border-top: 11px solid transparent;
+      border-bottom: 11px solid transparent;
+      filter: drop-shadow(0 0 10px rgba(49,208,139,0.3));
+    }
+
+    .showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .reference-art {
+      width: 100%;
+      height: 148px;
+      object-fit: cover;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.10);
+      opacity: 0.86;
+      filter: saturate(1.05) contrast(1.02);
+    }
+
+    .showcase-card {
+      border-radius: 22px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 16px;
+    }
+
+    .showcase-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .showcase-title b { font-size: 15px; }
+    .showcase-title span { color: var(--muted); font-size: 12px; }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .tag.active {
+      color: white;
+      border-color: rgba(78,161,255,0.24);
+      background: rgba(78,161,255,0.14);
+    }
+
+    .bars {
+      display: grid;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 70px 1fr 54px;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .bar-row .name { color: var(--muted); }
+    .bar {
+      position: relative;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.07);
+      overflow: hidden;
+    }
+
+    .bar > i {
+      position: absolute;
+      inset: 0 auto 0 0;
+      border-radius: 999px;
+      width: 0%;
+      transition: width 250ms ease;
+    }
+
+    .bar.cat > i { background: linear-gradient(90deg, #5ba8ff, #87d4ff); }
+    .bar.dog > i { background: linear-gradient(90deg, #ff8a5b, #ffb27e); }
+    .bar.rabbit > i { background: linear-gradient(90deg, #31d08b, #7beab8); }
+
+    .hard-label {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hard-label strong {
+      color: var(--text);
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .slider-wrap {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .slider-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+    }
+
+    .section {
+      padding: 28px 0 14px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(28px, 3vw, 42px);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+
+    .section-title p {
+      margin: 0;
+      max-width: 640px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      position: relative;
+      border-radius: 24px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-inner { padding: 18px; }
+
+    .compare-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .stat-card {
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .stat-card .k {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .stat-card .v {
+      font-size: 28px;
+      letter-spacing: -0.04em;
+      margin-top: 10px;
+      line-height: 1;
+    }
+
+    .stat-card .d {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .layers {
+      display: grid;
+      gap: 12px;
+    }
+
+    .layer-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .layers .model {
+      flex: 1 1 260px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .layers .model h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .layer-stack {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 4px;
+      margin-top: 12px;
+    }
+
+    .layer-stack span {
+      display: block;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+    }
+
+    .bert .layer-stack span:nth-child(n+1) { background: linear-gradient(180deg, rgba(78,161,255,0.70), rgba(78,161,255,0.28)); }
+    .distil .layer-stack span:nth-child(n+1) { background: linear-gradient(180deg, rgba(49,208,139,0.70), rgba(49,208,139,0.28)); }
+    .bert .layer-stack span:nth-child(n+7) { opacity: 0.18; }
+    .distil .layer-stack span:nth-child(n+7) { opacity: 0.18; }
+
+    .notes {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+    }
+
+    .quote {
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(78,161,255,0.10), rgba(49,208,139,0.08));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .quote h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .quote p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .talk {
+      display: grid;
+      gap: 10px;
+    }
+
+    .talk-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .talk-item b {
+      color: var(--text);
+      min-width: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: rgba(78,161,255,0.12);
+      border: 1px solid rgba(78,161,255,0.20);
+      flex: 0 0 auto;
+    }
+
+    .footer {
+      padding: 28px 0 48px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer a {
+      color: #cfe3ff;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(207,227,255,0.25);
+    }
+
+    .floating-note {
+      position: absolute;
+      inset: auto 20px 20px auto;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(8, 14, 27, 0.76);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #d9e7ff;
+      font-size: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    @media (max-width: 1040px) {
+      .hero, .grid-3, .notes, .compare-card { grid-template-columns: 1fr; }
+      .hero { min-height: unset; padding-top: 8px; }
+      .hero-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .robot-scene { grid-template-columns: 1fr; }
+      .arrow { width: 100%; max-width: 280px; }
+      .showcase { grid-template-columns: 1fr; }
+      .nav { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { width: min(var(--max), calc(100vw - 20px)); }
+      .hero h1 { font-size: 46px; }
+      .hero p { font-size: 16px; }
+      .hero-metrics { grid-template-columns: 1fr; }
+      .section-title { flex-direction: column; align-items: flex-start; }
+      .bar-row { grid-template-columns: 54px 1fr 48px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <a class="brand" href="#top">
+        <span class="brand-mark"></span>
+        <span>DistilBERT 讲课演示</span>
+      </a>
+      <nav class="nav">
+        <a href="#lab">蒸馏实验室</a>
+        <a href="#compare">核心对比</a>
+        <a href="#talk">讲课台词</a>
+      </nav>
+    </header>
+
+    <main id="top" class="hero">
+      <section>
+        <div class="eyebrow">knowledge distillation · teacher → student</div>
+        <h1>浓缩，不是稀释。</h1>
+        <p>
+          这不是情感分析网站，而是一个专门为这节课做的 DistilBERT 讲课页。
+          你可以在这里直观看到：普通训练只给硬答案，知识蒸馏会把老师的“经验”压成软标签，
+          再把这些暗知识塞进更小、更快的学生模型。
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn primary" href="#lab">开始演示</a>
+          <a class="btn ghost" href="#compare">看核心数据</a>
+        </div>
+
+        <div class="hero-metrics">
+          <div class="metric"><b>1.1 亿</b><span>BERT-base 参数量</span></div>
+          <div class="metric"><b>6600 万</b><span>DistilBERT 参数量</span></div>
+          <div class="metric"><b>1.6×</b><span>推理速度提升</span></div>
+          <div class="metric"><b>97%</b><span>保留的效果</span></div>
+        </div>
+      </section>
+
+      <section class="hero-visual">
+        <div class="visual-frame">
+          <div class="visual-header">
+            <span>teacher-student flow</span>
+            <span>soft labels</span>
+          </div>
+
+          <div class="visual-body">
+            <div class="robot-scene">
+              <div class="robot-card teacher">
+                <div class="robot-label">Teacher · BERT-base</div>
+                <div class="robot-body">
+                  <div class="robot-face"></div>
+                  <div class="robot-mouth"></div>
+                  <div class="robot-arms"></div>
+                </div>
+              </div>
+
+              <div class="arrow-wrap">
+                <div class="arrow-pill">Soft Labels</div>
+                <div class="arrow"></div>
+              </div>
+
+              <div class="robot-card student">
+                <div class="robot-label">Student · DistilBERT</div>
+                <div class="robot-body">
+                  <div class="robot-face"></div>
+                  <div class="robot-mouth"></div>
+                  <div class="robot-arms"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="showcase">
+              <div class="showcase-card">
+                <div class="showcase-title">
+                  <b>普通训练</b><span>硬标签</span>
+                </div>
+                <div class="hard-label">
+                  <span>学生只知道</span>
+                  <strong>“这是猫”</strong>
+                </div>
+              </div>
+
+              <div class="showcase-card">
+                <div class="showcase-title">
+                  <b>知识蒸馏</b><span>软标签</span>
+                </div>
+                <div class="hard-label">
+                  <span>老师告诉学生</span>
+                  <strong>70% 猫 · 20% 狗 · 10% 兔子</strong>
+                </div>
+              </div>
+            </div>
+
+            <img class="reference-art" src="assets/teacher_student_soft_labels.png" alt="Teacher robot sends soft labels to Student robot" />
+
+            <div class="floating-note">暗知识藏在“像不像”里，而不是只在最终答案里。</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section id="lab" class="section">
+      <div class="section-title">
+        <h2>蒸馏实验室</h2>
+        <p>拖动温度，切换样本，你会看到“软标签”是怎么从一个死答案，变成一组能传经验的概率分布。</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-inner">
+            <div class="tags" id="scenarioTags">
+              <button class="tag active" data-scenario="cat">这是猫</button>
+              <button class="tag" data-scenario="mild">猫狗有点像</button>
+              <button class="tag" data-scenario="rabbit">更像兔子</button>
+            </div>
+
+            <div class="slider-wrap">
+              <div class="slider-head">
+                <span>Temperature</span>
+                <strong id="tempValue">1.0</strong>
+              </div>
+              <input id="tempSlider" type="range" min="0.4" max="2.0" step="0.1" value="1.0" />
+              <div class="slider-head" style="margin-top: 10px;">
+                <span>低温更尖锐，高温更柔软</span>
+                <span id="tempHint">标准蒸馏</span>
+              </div>
+            </div>
+
+            <div class="bars">
+              <div class="bar-row">
+                <div class="name">猫</div>
+                <div class="bar cat"><i id="catBar"></i></div>
+                <div id="catVal">70%</div>
+              </div>
+              <div class="bar-row">
+                <div class="name">狗</div>
+                <div class="bar dog"><i id="dogBar"></i></div>
+                <div id="dogVal">20%</div>
+              </div>
+              <div class="bar-row">
+                <div class="name">兔子</div>
+                <div class="bar rabbit"><i id="rabbitBar"></i></div>
+                <div id="rabbitVal">10%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-inner">
+            <div class="showcase-title">
+              <b>学生学什么</b>
+              <span>不是只学答案</span>
+            </div>
+            <div class="talk">
+              <div class="talk-item"><b>1</b><span>模仿老师输出的概率分布，也就是把“像不像”的经验学过去。</span></div>
+              <div class="talk-item"><b>2</b><span>再对照真实答案，保证学生不会把经验学歪。</span></div>
+              <div class="talk-item"><b>3</b><span>最后，学生既保留精度，又能把体积和速度压下来。</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-inner">
+            <div class="showcase-title">
+              <b>一眼看懂的结论</b>
+              <span>上台时直接说</span>
+            </div>
+            <div class="quote">
+              <h3>DistilBERT 不是“缩水版” BERT，<br/>而是把老师的思路压缩进更小的壳。</h3>
+              <p>
+                它少一半层数，但保留了大部分语言理解能力；它不是把知识削薄，
+                而是把关键规律浓缩。你讲的重点，就是“暗知识”。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="compare" class="section">
+      <div class="section-title">
+        <h2>核心对比</h2>
+        <p>这页适合在课堂中停一下。让数字先说话，再回到“为什么更小却还很好用”。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-inner">
+          <div class="compare-card">
+            <div class="stat-card">
+              <div class="k">BERT-base</div>
+              <div class="v">1.1 亿参数</div>
+              <div class="d">体积大、计算重，但作为老师模型，能提供很强的经验分布。</div>
+            </div>
+            <div class="stat-card">
+              <div class="k">DistilBERT</div>
+              <div class="v" style="color: var(--accent);">6600 万参数</div>
+              <div class="d">体积缩小约 40%，速度提升约 60%，但保留了大多数语言能力。</div>
+            </div>
+          </div>
+
+          <div class="layers" style="margin-top: 16px;">
+            <div class="layer-wrap">
+              <div class="model bert">
+                <h3>BERT-base · 12 层</h3>
+                <div class="layer-stack" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span><span></span>
+                  <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+              <div class="model distil">
+                <h3>DistilBERT · 6 层</h3>
+                <div class="layer-stack" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span><span></span>
+                  <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+            </div>
+            <div class="hard-label">
+              <span>讲课金句</span>
+              <strong>减肥不是减智慧，而是把冗余压缩掉。</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="talk" class="section">
+      <div class="section-title">
+        <h2>讲课台词</h2>
+        <p>如果你要现场讲，这一段可以直接照着说，语气自然一点就很顺。</p>
+      </div>
+
+      <div class="notes">
+        <div class="quote">
+          <h3>三句就够</h3>
+          <p>
+            1. 普通训练只告诉学生“这是猫”。<br/>
+            2. 知识蒸馏会说“70% 猫、20% 狗、10% 兔子”，因为老师把经验也交给了学生。<br/>
+            3. DistilBERT 的厉害之处，不是记住更多参数，而是学到更多规律。
+          </p>
+        </div>
+
+        <div class="talk">
+          <div class="talk-item"><b>✓</b><span>这页不用讲公式，重点是“硬标签 vs 软标签”。</span></div>
+          <div class="talk-item"><b>✓</b><span>把“暗知识”说慢一点，学生会一下子懂。</span></div>
+          <div class="talk-item"><b>✓</b><span>结尾回扣“浓缩，不是稀释”。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      适合直接放到 GitHub Pages 或任意静态站点。你也可以把它当成课堂的“演示页”。<br/>
+      如果要加上仓库链接，我可以继续帮你接一个 <a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a> 部署版本。
+    </footer>
+  </div>
+
+  <script>
+    const scenarios = {
+      cat: {
+        label: '标准蒸馏',
+        temp: 1.0,
+        values: [70, 20, 10]
+      },
+      mild: {
+        label: '更软一点',
+        temp: 1.4,
+        values: [52, 32, 16]
+      },
+      rabbit: {
+        label: '更偏兔子',
+        temp: 0.7,
+        values: [30, 18, 52]
+      }
+    };
+
+    const tempSlider = document.getElementById('tempSlider');
+    const tempValue = document.getElementById('tempValue');
+    const tempHint = document.getElementById('tempHint');
+    const catBar = document.getElementById('catBar');
+    const dogBar = document.getElementById('dogBar');
+    const rabbitBar = document.getElementById('rabbitBar');
+    const catVal = document.getElementById('catVal');
+    const dogVal = document.getElementById('dogVal');
+    const rabbitVal = document.getElementById('rabbitVal');
+    const scenarioTags = Array.from(document.querySelectorAll('#scenarioTags .tag'));
+
+    let current = 'cat';
+
+    function render(values, temp, label) {
+      tempSlider.value = temp.toFixed(1);
+      tempValue.textContent = temp.toFixed(1);
+      tempHint.textContent = label;
+      [catBar, dogBar, rabbitBar].forEach((bar, i) => {
+        bar.style.width = values[i] + '%';
+      });
+      catVal.textContent = values[0] + '%';
+      dogVal.textContent = values[1] + '%';
+      rabbitVal.textContent = values[2] + '%';
+    }
+
+    function activeScenario(name) {
+      current = name;
+      scenarioTags.forEach(btn => btn.classList.toggle('active', btn.dataset.scenario === name));
+      const s = scenarios[name];
+      render(s.values, s.temp, s.label);
+    }
+
+    scenarioTags.forEach(btn => {
+      btn.addEventListener('click', () => activeScenario(btn.dataset.scenario));
+    });
+
+    tempSlider.addEventListener('input', () => {
+      const temp = parseFloat(tempSlider.value);
+      tempValue.textContent = temp.toFixed(1);
+
+      const base = scenarios[current].values;
+      const softness = Math.max(0.55, Math.min(1.7, temp));
+      const sum = base.reduce((a, b) => a + b, 0);
+      const normalized = base.map(v => v / sum * 100);
+      const centered = normalized.map(v => 33.33 + (v - 33.33) / softness);
+      const clamp = centered.map(v => Math.max(6, Math.min(84, v)));
+      const total = clamp.reduce((a, b) => a + b, 0);
+      const scaled = clamp.map(v => Math.round(v * 100 / total));
+      const diff = 100 - scaled.reduce((a, b) => a + b, 0);
+      scaled[0] += diff;
+      render(scaled, temp, softness > 1 ? '更软的标签' : '更尖锐的标签');
+    });
+
+    activeScenario('cat');
+  </script>
+</body>
+</html>
